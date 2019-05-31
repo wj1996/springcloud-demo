@@ -1,0 +1,15 @@
+server:
+  port: 8081
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/my
+    username: root
+    password: root
+  application:
+    name: service
+mybatis:
+  type-aliases-package: com.wj01.pojo
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:10086/eureka

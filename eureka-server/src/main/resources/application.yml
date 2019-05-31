@@ -1,0 +1,16 @@
+server:
+  port: 10086
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+  instance:
+    #采用了修改IP的方式，无效，不整了
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.cloud.client.hostname}:${server.port}
+    #:@project.version@
+    #ip-address: 127.0.0.1
+spring:
+  application:
+    name: eureka-server
