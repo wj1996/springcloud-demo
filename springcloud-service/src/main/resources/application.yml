@@ -12,4 +12,5 @@ mybatis:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:10086/eureka
+      #高可用的Eureka集群后，设置IP的时候，以逗号分隔
+      defaultZone: http://localhost:10086/eureka,http://localhost:10087/eureka

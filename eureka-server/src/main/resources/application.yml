@@ -1,5 +1,5 @@
 server:
-  port: 10086
+  port: 10087
 eureka:
   client:
     service-url:
@@ -8,7 +8,7 @@ eureka:
     #采用了修改IP的方式，无效，不整了
     prefer-ip-address: true
     ip-address: 127.0.0.1
-    instance-id: ${spring.cloud.client.hostname}:${server.port}
+    #instance-id: ${spring.cloud.client.hostname}:${server.port}
     #:@project.version@
     #ip-address: 127.0.0.1
 spring:
