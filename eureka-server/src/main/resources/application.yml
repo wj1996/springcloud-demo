@@ -3,7 +3,13 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:10086/eureka
+      defaultZone: http://127.0.0.1:10087/eureka
+    #服务在启动时，会检测配置属性中的下列属性，默认为true，会向EurekaServer发起一个REST请求，并携带自己的元数据信息。
+    #EurekaServer会把这些信息配置到一个双层Map结构中
+    #第一层Map的key就是服务ID，一般是配置中的spring.application.name属性
+    #第二层Map的可以就是服务的实例ID，一般host+serviceID+port 例如：localhost:service:8081
+    #值则是服务的实例对象，一个服务，可以同时启动多个不同实例，形成集群
+    register-with-eureka: false
   instance:
     #采用了修改IP的方式，无效，不整了
     prefer-ip-address: true
@@ -11,6 +17,17 @@ eureka:
     #instance-id: ${spring.cloud.client.hostname}:${server.port}
     #:@project.version@
     #ip-address: 127.0.0.1
+  server:
+    #时效剔除，有时候服务可能由于内存溢出或者网路故障等原因使得服务不能正常的工作，而服务注册中心并没有收到服务
+    #下线的请求，相对于服务提供者的'服务续约‘操作，服务注册中心在启动时会创建一个定时任务，默认每隔一段时间（默认为
+    #60s)将当前清单中超时（默认为90s)没有续约的服务剔除，这个操作被称为失效剔除 单位：毫秒
+    eviction-interval-timer-in-ms: 30000
+    #当服务未按时进行心跳续约时，Eureka会统计服务实例最近15分钟心跳续约的比例是否低于85%，在生产环境下，因为网络
+    #延迟
+    #等原因，心跳失败实例的比例很可能会超标，但是此时就把服务剔除列表并不妥当，因为服务可能没有宕机，Eureka在这段
+    #时间内不会剔除任何服务实例，直到网络恢复正常。生产环境下这很有效，保证了大多数服务依然可用，不过也有可能获取
+    #到失败的服务实例，因此服务调用者必须做好服务的失败容错。通过下面的配置来关停自我保护
+    enable-self-preservation: true
 spring:
   application:
     name: eureka-server

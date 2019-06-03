@@ -37,6 +37,7 @@ public class ConsumerController {
         //根据服务ID获取实例
         List<ServiceInstance> instances = discoveryClient.getInstances("service");
         //从实例中取出IP和端口
+        //随机，轮询，hash，（ID hash，最少访问）
         ServiceInstance serviceInstance = instances.get(0);
         String url = "http://" + serviceInstance.getHost() + ":" + serviceInstance.getPort() + "/account/" + id;
         System.out.println(url);

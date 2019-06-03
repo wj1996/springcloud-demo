@@ -1,5 +1,5 @@
 server:
-  port: 8082
+  port: 8083
 spring:
   application:
     name: consumer
@@ -7,3 +7,5 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:10086/eureka,http://localhost:10087/eureka
+    #拉取服务列表，设置每隔多少秒更新数据
+    registry-fetch-interval-seconds: 3

@@ -14,3 +14,8 @@ eureka:
     service-url:
       #高可用的Eureka集群后，设置IP的时候，以逗号分隔
       defaultZone: http://localhost:10086/eureka,http://localhost:10087/eureka
+  instance:
+    #配置心跳间隔，服务续约（renew）
+    lease-renewal-interval-in-seconds: 30
+    #服务时效时间
+    lease-expiration-duration-in-seconds: 90
