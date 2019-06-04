@@ -11,4 +11,4 @@ eureka:
     registry-fetch-interval-seconds: 3
 serivce: #服务名称
   ribbon:
-      NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+      NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule   #配置负载均衡

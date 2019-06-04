@@ -18,7 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("consumer")
-@DefaultProperties(defaultFallback = "getUserByIdFromEureka2Fallback")  //服务降级作用在类上的写法
+@DefaultProperties(defaultFallback = "defaultFallback")  //服务降级作用在类上的写法
 public class ConsumerController {
 
     @Autowired
@@ -78,7 +78,7 @@ public class ConsumerController {
 //    @HystrixCommand(fallbackMethod = "getUserByIdFromEureka2Fallback")  //如果作用在了类上的服务降级，此处可以不指定失败方法，只需要开启降级即可
 //    @HystrixCommand(commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value = "2500")})
     //设置超时时间
-    @HystrixCommand
+    @HystrixCommand/*(commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value = "4500")})*/
     public String getUserByIdFromEureka2(@PathVariable Integer id) {
 
         String url = "http://service/account/" + id;
@@ -94,6 +94,15 @@ public class ConsumerController {
      * @return
      */
     public String getUserByIdFromEureka2Fallback(Integer id) {
+        return "服务器热闹";
+    }
+
+
+    /**
+     * 注意，如果作用在类上，不可能保证每个请求的方法参数都一致，这里不写（通用）
+     * @return
+     */
+    public String defaultFallback() {
         return "服务器热闹";
     }
 
