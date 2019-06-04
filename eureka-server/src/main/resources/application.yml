@@ -1,9 +1,9 @@
 server:
-  port: 10087
+  port: 10086
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:10087/eureka
+      defaultZone: http://127.0.0.1:10086/eureka
     #服务在启动时，会检测配置属性中的下列属性，默认为true，会向EurekaServer发起一个REST请求，并携带自己的元数据信息。
     #EurekaServer会把这些信息配置到一个双层Map结构中
     #第一层Map的key就是服务ID，一般是配置中的spring.application.name属性

@@ -12,6 +12,11 @@ public class AccountService {
     private AccountMapper accountMapper;
 
     public Account queryAccountById(Integer id) {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         return accountMapper.selectByPrimaryKey(id);
     }
 }
