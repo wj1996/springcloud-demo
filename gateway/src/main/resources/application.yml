@@ -1,0 +1,31 @@
+server:
+  port: 10010
+#配置路由的规则
+zuul:
+  routes:
+    ##简单配置，直接配置一个路由规则，这样配置直接将路径写死，不易于拓展，并且zuul实际架构中，是先去Eureka拉取服务列表，将本次请求选择一个服务去请求
+    #hehe:
+      #path: /service/**
+#      url: http://localhost:8081
+      #采用zuul去拉取Eureka服务列表后，上面就不能再写死路径了，不再使用URL这个属性，使用serviceId属性
+      #serviceId: service
+    #简化的写法，由于这个规则id是唯一的，服务名称也是唯一的，可以像下面这样写(简化配置),zuul会默认创建这样的路由规则，根据
+    service: /service/**
+  #配置忽略的自动创建路由
+  ignored-services:
+      consumer
+  #全局前缀
+  prifix: /api
+  #注意：设置了使用zuul去拉取Eureka服务列表后，去访问可能会报超时服务，此时需要设置zuul超时时间，还需要设置ribbon的超时时间
+  #ribbon的超时时间要小于zuul超时时间
+  host:
+    connect-timeout-millis: 15000
+    socket-timeout-millis: 60000
+ribbon:
+  ReadTimeout: 10000   #http连接超时要比Hystrix的大
+  ConnectTimeout: 10000 #socket超时
+#配置Eureka,zuul去拉取服务列表
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:10086/eureka

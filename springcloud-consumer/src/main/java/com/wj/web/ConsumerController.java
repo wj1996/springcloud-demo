@@ -3,6 +3,7 @@ package com.wj.web;
 import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.wj.client.AccountClient;
 import com.wj.pojo.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -46,27 +47,27 @@ public class ConsumerController {
     /*第一种*/
     @Autowired
     private DiscoveryClient discoveryClient;   //注意：是spring下面的
-//    /*@GetMapping("eureka/{id}")
-//    public String getUserByIdFromEureka(@PathVariable Integer id) {
-//        *//*//*/根据服务ID获取实例
-//        List<ServiceInstance> instances = discoveryClient.getInstances("service");
-//        //从实例中取出IP和端口
-//        //随机，轮询，hash，（ID hash，最少访问）
-//        ServiceInstance serviceInstance = instances.get(0);*//*
-//
-//        *//*通过负载均衡的方式获取(默认轮询)，简单方式*//*
-////        ServiceInstance serviceInstance = ribbonLoadBalancerClient.choose("service");
-//        *//*通过负载均衡的方式获取(默认轮询)，简单方式*//*
-//
-////        String url = "http://" + serviceInstance.getHost() + ":" + serviceInstance.getPort() + "/account/" + id;
-//
-//        //负载均衡第二种方式实现
-//        String url = "http://service/account/" + id;
-//
-//        System.out.println(url);
-//        String account = restTemplate.getForObject(url,String.class);
-//        return account;
-//    }*/
+    @GetMapping("eureka/{id}")
+    public String getUserByIdFromEureka(@PathVariable Integer id) {
+        //根据服务ID获取实例
+        List<ServiceInstance> instances = discoveryClient.getInstances("service");
+        //从实例中取出IP和端口
+        //随机，轮询，hash，（ID hash，最少访问）
+//        ServiceInstance serviceInstance = instances.get(0);
+
+        //通过负载均衡的方式获取(默认轮询)，简单方式
+//        ServiceInstance serviceInstance = ribbonLoadBalancerClient.choose("service");
+        //通过负载均衡的方式获取(默认轮询)，简单方式
+
+//        String url = "http://" + serviceInstance.getHost() + ":" + serviceInstance.getPort() + "/account/" + id;
+
+        //负载均衡第二种方式实现
+        String url = "http://service/account/" + id;
+
+        System.out.println(url);
+        String account = restTemplate.getForObject(url,String.class);
+        return account;
+    }
 
 
     /**
@@ -76,10 +77,21 @@ public class ConsumerController {
      */
     @GetMapping("eureka2/{id}")
 //    @HystrixCommand(fallbackMethod = "getUserByIdFromEureka2Fallback")  //如果作用在了类上的服务降级，此处可以不指定失败方法，只需要开启降级即可
-//    @HystrixCommand(commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value = "2500")})
-    //设置超时时间
-    @HystrixCommand/*(commandProperties = {@HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value = "4500")})*/
+    //设置超时时间，配置阈值,休眠时间
+    @HystrixCommand(commandProperties =
+            {       @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value = "2500"),
+                    @HystrixProperty(name="circuitBreaker.requestVolumeThreshold",value = "5"),
+                    @HystrixProperty(name="circuitBreaker.sleepWindowInMilliseconds",value = "10000"),
+                    @HystrixProperty(name="circuitBreaker.errorThresholdPercentage",value = "60")})
+//    @HystrixCommand
     public String getUserByIdFromEureka2(@PathVariable Integer id) {
+
+        /**
+         * 模拟服务失败(手动控制)
+         */
+        if (id == -1) {
+            throw new RuntimeException("异常");
+        }
 
         String url = "http://service/account/" + id;
         System.out.println(url);
@@ -107,8 +119,16 @@ public class ConsumerController {
     }
 
 
+    /**
+     * 使用Feign实现(上面的业务代码基本上都不需要了)
+     */
+    @Autowired
+    private AccountClient accountClient;
 
-
+    @GetMapping("{id}")
+    public Account getById(@PathVariable Integer id) {
+        return accountClient.queryById(id);
+    }
 
 
 
